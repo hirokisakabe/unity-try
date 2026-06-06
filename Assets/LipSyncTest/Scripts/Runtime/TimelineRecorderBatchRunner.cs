@@ -26,19 +26,12 @@ namespace UnityTry.LipSyncTest
 #if UNITY_EDITOR
         RecorderController recorderController;
 
-        void OnEnable()
+        public static void ConfigureMovieRecorderSettings(
+            MovieRecorderSettings movieRecorder,
+            string recorderName,
+            string recorderOutputFile)
         {
-            if (!Application.isBatchMode) return;
-
-            var outputDirectory = Path.GetDirectoryName(Path.GetFullPath(outputFile));
-            if (!string.IsNullOrEmpty(outputDirectory))
-            {
-                Directory.CreateDirectory(outputDirectory);
-            }
-
-            var settings = ScriptableObject.CreateInstance<RecorderControllerSettings>();
-            var movieRecorder = ScriptableObject.CreateInstance<MovieRecorderSettings>();
-            movieRecorder.name = "Batch TestVoice Movie Recorder";
+            movieRecorder.name = recorderName;
             movieRecorder.Enabled = true;
             movieRecorder.CaptureAudio = true;
             movieRecorder.CaptureAlpha = false;
@@ -52,8 +45,23 @@ namespace UnityTry.LipSyncTest
                 OutputWidth = 1280,
                 OutputHeight = 720,
             };
-            movieRecorder.OutputFile = outputFile;
+            movieRecorder.OutputFile = recorderOutputFile;
             movieRecorder.FrameRate = 30f;
+        }
+
+        void OnEnable()
+        {
+            if (!Application.isBatchMode) return;
+
+            var outputDirectory = Path.GetDirectoryName(Path.GetFullPath(outputFile));
+            if (!string.IsNullOrEmpty(outputDirectory))
+            {
+                Directory.CreateDirectory(outputDirectory);
+            }
+
+            var settings = ScriptableObject.CreateInstance<RecorderControllerSettings>();
+            var movieRecorder = ScriptableObject.CreateInstance<MovieRecorderSettings>();
+            ConfigureMovieRecorderSettings(movieRecorder, "Batch TestVoice Movie Recorder", outputFile);
 
             settings.AddRecorderSettings(movieRecorder);
             settings.FrameRate = 30f;
@@ -78,7 +86,7 @@ namespace UnityTry.LipSyncTest
 
             recorderController.StopRecording();
             recorderController = null;
-            EditorApplication.Exit(0);
+            EditorApplication.Exit(HasExpectedOutput() ? 0 : 1);
         }
 
         void OnDisable()
@@ -87,6 +95,13 @@ namespace UnityTry.LipSyncTest
 
             recorderController.StopRecording();
             recorderController = null;
+        }
+
+        bool HasExpectedOutput()
+        {
+            var expectedOutputPath = Path.GetFullPath(outputFile + ".mp4");
+            var fileInfo = new FileInfo(expectedOutputPath);
+            return fileInfo.Exists && fileInfo.Length > 0;
         }
 #endif
     }

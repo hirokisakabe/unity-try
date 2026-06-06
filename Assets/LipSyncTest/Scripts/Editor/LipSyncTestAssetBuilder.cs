@@ -197,7 +197,9 @@ namespace UnityTry.LipSyncTest.Editor
                 throw new InvalidDataException("Timeline duration is shorter than the configured test sequence.");
             }
 
-            if (recorderPreset.GetTargetTypeName() != nameof(MovieRecorderSettings))
+            var recorderTargetType = recorderPreset.GetTargetTypeName();
+            if (recorderTargetType != nameof(MovieRecorderSettings) &&
+                recorderTargetType != typeof(MovieRecorderSettings).FullName)
             {
                 throw new InvalidDataException("Recorder preset does not target MovieRecorderSettings.");
             }
@@ -461,22 +463,10 @@ namespace UnityTry.LipSyncTest.Editor
             var recorder = ScriptableObject.CreateInstance<MovieRecorderSettings>();
             try
             {
-                recorder.name = "TestVoice Movie Recorder";
-                recorder.Enabled = true;
-                recorder.CaptureAudio = true;
-                recorder.CaptureAlpha = false;
-                recorder.EncoderSettings = new CoreEncoderSettings
-                {
-                    Codec = CoreEncoderSettings.OutputCodec.MP4,
-                    EncodingQuality = CoreEncoderSettings.VideoEncodingQuality.High,
-                };
-                recorder.ImageInputSettings = new GameViewInputSettings
-                {
-                    OutputWidth = 1280,
-                    OutputHeight = 720,
-                };
-                recorder.OutputFile = RecorderOutputPath;
-                recorder.FrameRate = 30f;
+                TimelineRecorderBatchRunner.ConfigureMovieRecorderSettings(
+                    recorder,
+                    "TestVoice Movie Recorder",
+                    RecorderOutputPath);
 
                 var preset = new Preset(recorder);
                 AssetDatabase.CreateAsset(preset, RecorderPresetPath);
@@ -533,7 +523,7 @@ namespace UnityTry.LipSyncTest.Editor
             SceneManager.MoveGameObjectToScene(directorObject, scene);
             var director = directorObject.AddComponent<PlayableDirector>();
             director.playableAsset = timeline;
-            director.playOnAwake = true;
+            director.playOnAwake = false;
             director.timeUpdateMode = DirectorUpdateMode.GameTime;
             director.extrapolationMode = DirectorWrapMode.None;
             director.initialTime = 0d;
