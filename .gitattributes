@@ -1,0 +1,75 @@
+# Unity text assets
+*.asmdef text eol=lf
+*.asmref text eol=lf
+*.anim text eol=lf
+*.asset text eol=lf
+*.brush text eol=lf
+*.cginc text eol=lf
+*.compute text eol=lf
+*.controller text eol=lf
+*.cs text eol=lf
+*.flare text eol=lf
+*.fontsettings text eol=lf
+*.guiskin text eol=lf
+*.hlsl text eol=lf
+*.inputactions text eol=lf
+*.json text eol=lf
+*.mat text eol=lf
+*.mask text eol=lf
+*.meta text eol=lf
+*.mixer text eol=lf
+*.overrideController text eol=lf
+*.physicMaterial text eol=lf
+*.physicsMaterial2D text eol=lf
+*.playable text eol=lf
+*.prefab text eol=lf
+*.preset text eol=lf
+*.renderTexture text eol=lf
+*.shader text eol=lf
+*.shadergraph text eol=lf
+*.shadervariants text eol=lf
+*.signal text eol=lf
+*.spriteatlas text eol=lf
+*.terrainlayer text eol=lf
+*.unity text eol=lf
+*.uss text eol=lf
+*.uxml text eol=lf
+*.xml text eol=lf
+
+# 3D models and VRM assets
+*.[vV][rR][mM] filter=lfs diff=lfs merge=lfs -text
+*.[gG][lL][bB] filter=lfs diff=lfs merge=lfs -text
+*.[fF][bB][xX] filter=lfs diff=lfs merge=lfs -text
+*.[bB][lL][eE][nN][dD] filter=lfs diff=lfs merge=lfs -text
+# OBJ is text-based, but mesh files can grow large enough to justify LFS.
+*.[oO][bB][jJ] filter=lfs diff=lfs merge=lfs -text
+
+# Native plugins and Unity packages
+*.[dD][lL][lL] filter=lfs diff=lfs merge=lfs -text
+*.[sS][oO] filter=lfs diff=lfs merge=lfs -text
+*.[dD][yY][lL][iI][bB] filter=lfs diff=lfs merge=lfs -text
+*.[uU][nN][iI][tT][yY][pP][aA][cC][kK][aA][gG][eE] filter=lfs diff=lfs merge=lfs -text
+
+# Audio
+*.[wW][aA][vV] filter=lfs diff=lfs merge=lfs -text
+*.[mM][pP]3 filter=lfs diff=lfs merge=lfs -text
+*.[oO][gG][gG] filter=lfs diff=lfs merge=lfs -text
+*.[fF][lL][aA][cC] filter=lfs diff=lfs merge=lfs -text
+
+# Images and textures
+*.[pP][nN][gG] filter=lfs diff=lfs merge=lfs -text
+*.[jJ][pP][gG] filter=lfs diff=lfs merge=lfs -text
+*.[jJ][pP][eE][gG] filter=lfs diff=lfs merge=lfs -text
+*.[tT][gG][aA] filter=lfs diff=lfs merge=lfs -text
+*.[tT][iI][fF] filter=lfs diff=lfs merge=lfs -text
+*.[tT][iI][fF][fF] filter=lfs diff=lfs merge=lfs -text
+*.[dD][dD][sS] filter=lfs diff=lfs merge=lfs -text
+*.[pP][sS][dD] filter=lfs diff=lfs merge=lfs -text
+*.[eE][xX][rR] filter=lfs diff=lfs merge=lfs -text
+*.[hH][dD][rR] filter=lfs diff=lfs merge=lfs -text
+
+# Video
+*.[mM][pP]4 filter=lfs diff=lfs merge=lfs -text
+*.[mM][oO][vV] filter=lfs diff=lfs merge=lfs -text
+*.[wW][eE][bB][mM] filter=lfs diff=lfs merge=lfs -text
+*.[aA][vV][iI] filter=lfs diff=lfs merge=lfs -text
