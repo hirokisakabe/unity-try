@@ -265,6 +265,7 @@ namespace UnityTry.LipSyncTest.Editor
             var cameraObject = new GameObject("Main Camera");
             SceneManager.MoveGameObjectToScene(cameraObject, scene);
             var camera = cameraObject.AddComponent<Camera>();
+            cameraObject.AddComponent<AudioListener>();
             camera.tag = "MainCamera";
             camera.transform.position = new Vector3(0f, 1.25f, -2.2f);
             camera.transform.rotation = Quaternion.LookRotation(new Vector3(0f, 1.15f, 0f) - camera.transform.position);

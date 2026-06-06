@@ -32,6 +32,15 @@ namespace UnityTry.LipSyncTest
             if (!vrm) vrm = GetComponent<Vrm10Instance>();
         }
 
+        void OnDisable()
+        {
+            if (!vrm && !TryGetComponent(out vrm)) return;
+            var expression = vrm.Runtime?.Expression;
+            if (expression == null) return;
+
+            ResetMouth(expression);
+        }
+
         public void OnLipSyncUpdate(LipSyncInfo info)
         {
             if (!vrm && !TryGetComponent(out vrm)) return;
