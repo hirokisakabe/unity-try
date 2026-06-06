@@ -250,7 +250,7 @@
       "url": "https://packages.unity.com"
     },
     "com.vrmc.gltf": {
-      "version": "https://github.com/vrm-c/UniVRM.git?path=/Packages/UniGLTF#v0.131.0",
+      "version": "https://github.com/vrm-c/UniVRM.git?path=/Packages/UniGLTF#3b99078d26b362733ad9bf463f98c83b8a1b4c9f",
       "depth": 0,
       "source": "git",
       "dependencies": {
@@ -263,7 +263,7 @@
       "hash": "3b99078d26b362733ad9bf463f98c83b8a1b4c9f"
     },
     "com.vrmc.univrm": {
-      "version": "https://github.com/vrm-c/UniVRM.git?path=/Packages/VRM#v0.131.0",
+      "version": "https://github.com/vrm-c/UniVRM.git?path=/Packages/VRM#3b99078d26b362733ad9bf463f98c83b8a1b4c9f",
       "depth": 0,
       "source": "git",
       "dependencies": {
@@ -273,7 +273,7 @@
       "hash": "3b99078d26b362733ad9bf463f98c83b8a1b4c9f"
     },
     "com.vrmc.vrm": {
-      "version": "https://github.com/vrm-c/UniVRM.git?path=/Packages/VRM10#v0.131.0",
+      "version": "https://github.com/vrm-c/UniVRM.git?path=/Packages/VRM10#3b99078d26b362733ad9bf463f98c83b8a1b4c9f",
       "depth": 0,
       "source": "git",
       "dependencies": {

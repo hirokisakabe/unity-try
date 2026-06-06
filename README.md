@@ -15,3 +15,5 @@ git clone https://github.com/hirokisakabe/unity-try.git
 git lfs install
 git lfs pull
 ```
+
+初回の Unity Package 解決では `packages.unity.com`、`registry.npmjs.org`、`github.com` へのネットワークアクセスが必要です。
