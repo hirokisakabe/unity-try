@@ -16,4 +16,4 @@ git lfs install
 git lfs pull
 ```
 
-初回の Unity Package 解決では `packages.unity.com`、`registry.npmjs.org`、`github.com` へのネットワークアクセスが必要です。
+初回の Unity Package 解決では `packages.unity.com`、`registry.npmjs.org`、`github.com` へのネットワークアクセスが必要です。UniVRM は Git URL 依存として解決するため、`git` コマンドも `PATH` から実行できる状態にしてください。
