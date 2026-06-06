@@ -1,8 +1,14 @@
 {
   "mcpServers": {
     "unityMCP": {
-      "type": "http",
-      "url": "http://localhost:8080/mcp"
+      "command": "uvx",
+      "args": [
+        "--from",
+        "mcpforunityserver",
+        "mcp-for-unity",
+        "--transport",
+        "stdio"
+      ]
     }
   }
 }

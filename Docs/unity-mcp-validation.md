@@ -46,27 +46,36 @@ Unity package resolve 後、`Packages/packages-lock.json` では `hash: 78ee5418
 
 また、headless 検証用に `Assets/McpValidation/Editor/UnityMcpValidationRunner.cs` を追加した。これは Unity Editor 側の HTTP bridge を `http://127.0.0.1:8080` に接続するための Editor-only helper で、本番 scene や asset を自動編集するものではない。
 
-AI client 側の project shared MCP 設定として、root の `.mcp.json` に以下を追加した。Claude Code は project scope の MCP server 設定を `.mcp.json` から読み込む。Cursor / Windsurf / Cline などの HTTP 対応 client でも同じ endpoint を利用できる。
+AI client 側の project shared MCP 設定として、root の `.mcp.json` に以下を追加した。Claude Code は project scope の MCP server 設定を `.mcp.json` から読み込む。
 
 ```json
 {
   "mcpServers": {
     "unityMCP": {
-      "type": "http",
-      "url": "http://localhost:8080/mcp"
+      "command": "uvx",
+      "args": [
+        "--from",
+        "mcpforunityserver",
+        "mcp-for-unity",
+        "--transport",
+        "stdio"
+      ]
     }
   }
 }
 ```
 
-この設定は AI client を Unity MCP server に接続するためのもので、Unity Editor 側の MCP for Unity window から server / bridge を起動しておく必要がある。
+この設定では AI client が `mcp-for-unity` server process を stdio transport で起動する。Unity Editor 側の MCP for Unity bridge は別途 Unity Editor 内で接続可能な状態にしておく必要がある。
 
 Codex 向けには `.mcp.json` ではなく `.codex/config.toml` に MCP server を設定した。Codex CLI と IDE extension は `config.toml` の MCP 設定を共有し、project-scoped `.codex/config.toml` は trusted project でのみ読み込まれる。
 
 ```toml
 [mcp_servers.unityMCP]
-url = "http://localhost:8080/mcp"
+command = "uvx"
+args = ["--from", "mcpforunityserver", "mcp-for-unity", "--transport", "stdio"]
 ```
+
+Claude Code と Codex で MCP 設定ファイル自体は共通化できない。Claude Code は `.mcp.json`、Codex は `.codex/config.toml` を読むため、同じ `uvx` 起動コマンドをそれぞれの形式で重複定義している。
 
 ## ローカル検証結果
 
@@ -136,7 +145,8 @@ Python MCP client で `manage_gameobject` を呼び出した。
 
 - AI client から MCP tools を使うには、Unity package の導入だけでなく `.mcp.json` などの client 側 MCP 設定が必要。
 - Codex から MCP tools を使うには、trusted project として `.codex/config.toml` の project config が読み込まれる必要がある。読み込み後は Codex CLI の `/mcp` で `unityMCP` の状態を確認できる。
-- `.mcp.json` は local HTTP endpoint を参照するため、利用前に Unity Editor で MCP for Unity server が起動していることを確認する。
+- stdio 設定では AI client が MCP server process を起動するが、Unity Editor 側の bridge は Unity Editor 上で接続可能な状態にしておく必要がある。
+- `uvx` が PATH で解決できない環境では、各 user の local config で absolute path に置き換える。
 - 初回は Unity Editor が同じ project を開いていたため、batchmode 起動が project lock で失敗した。headless 検証時は既存 Editor を閉じる。
 - `-executeMethod` 内で async 処理を同期 wait すると Editor main thread が塞がり、MCP tool call が詰まる。検証 helper は `EditorApplication.delayCall` で bridge 起動を逃がしている。
 - 今回作成した `MCP_Validation_Cube` は未保存 scene 上の一時オブジェクトで、重要 asset には保存していない。
