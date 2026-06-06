@@ -20,6 +20,7 @@
 *.mixer text eol=lf
 *.overrideController text eol=lf
 *.physicMaterial text eol=lf
+*.physicsMaterial2D text eol=lf
 *.playable text eol=lf
 *.prefab text eol=lf
 *.preset text eol=lf
@@ -31,6 +32,8 @@
 *.spriteatlas text eol=lf
 *.terrainlayer text eol=lf
 *.unity text eol=lf
+*.uss text eol=lf
+*.uxml text eol=lf
 *.xml text eol=lf
 
 # 3D models and VRM assets
@@ -38,6 +41,7 @@
 *.[gG][lL][bB] filter=lfs diff=lfs merge=lfs -text
 *.[fF][bB][xX] filter=lfs diff=lfs merge=lfs -text
 *.[bB][lL][eE][nN][dD] filter=lfs diff=lfs merge=lfs -text
+# OBJ is text-based, but mesh files can grow large enough to justify LFS.
 *.[oO][bB][jJ] filter=lfs diff=lfs merge=lfs -text
 
 # Native plugins and Unity packages
