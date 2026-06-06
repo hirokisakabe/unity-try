@@ -35,8 +35,10 @@ namespace UnityTry.LipSyncTest
         public void OnLipSyncUpdate(LipSyncInfo info)
         {
             if (!vrm && !TryGetComponent(out vrm)) return;
+            var expression = vrm.Runtime?.Expression;
+            if (expression == null) return;
 
-            ResetMouth();
+            ResetMouth(expression);
 
             if (info.phonemeRatios == null) return;
 
@@ -46,17 +48,17 @@ namespace UnityTry.LipSyncTest
                 if (!PhonemeMap.TryGetValue(pair.Key, out var key)) continue;
 
                 var weight = Mathf.Clamp01(pair.Value) * volume * maxWeight;
-                vrm.Runtime.Expression.SetWeight(key, weight);
+                expression.SetWeight(key, weight);
             }
         }
 
-        void ResetMouth()
+        static void ResetMouth(Vrm10RuntimeExpression expression)
         {
-            vrm.Runtime.Expression.SetWeight(ExpressionKey.Aa, 0f);
-            vrm.Runtime.Expression.SetWeight(ExpressionKey.Ih, 0f);
-            vrm.Runtime.Expression.SetWeight(ExpressionKey.Ou, 0f);
-            vrm.Runtime.Expression.SetWeight(ExpressionKey.Ee, 0f);
-            vrm.Runtime.Expression.SetWeight(ExpressionKey.Oh, 0f);
+            expression.SetWeight(ExpressionKey.Aa, 0f);
+            expression.SetWeight(ExpressionKey.Ih, 0f);
+            expression.SetWeight(ExpressionKey.Ou, 0f);
+            expression.SetWeight(ExpressionKey.Ee, 0f);
+            expression.SetWeight(ExpressionKey.Oh, 0f);
         }
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using UniVRM10;
 using UnityEditor;
@@ -23,6 +24,11 @@ namespace UnityTry.LipSyncTest.Editor
         [MenuItem("Tools/LipSync Test/Rebuild Issue 4 Assets")]
         public static void Build()
         {
+            if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+            {
+                return;
+            }
+
             EnsureDirectories();
             ImportInputs();
 
@@ -90,10 +96,19 @@ namespace UnityTry.LipSyncTest.Editor
                     throw new MissingComponentException("Prefab does not have a configured uLipSyncBakedDataPlayer.");
                 }
 
-                if (!avatar.GetComponent<Vrm10BakedLipSyncDriver>())
+                var driver = avatar.GetComponent<Vrm10BakedLipSyncDriver>();
+                if (!driver)
                 {
                     throw new MissingComponentException("Prefab does not have Vrm10BakedLipSyncDriver.");
                 }
+
+                driver.OnLipSyncUpdate(new LipSyncInfo
+                {
+                    phoneme = "A",
+                    volume = 1f,
+                    rawVolume = 1f,
+                    phonemeRatios = new Dictionary<string, float> { { "A", 1f } },
+                });
 
                 if (player.onLipSyncUpdate.GetPersistentEventCount() == 0)
                 {
@@ -118,10 +133,28 @@ namespace UnityTry.LipSyncTest.Editor
                 Root + "/Scenes",
             })
             {
-                if (!AssetDatabase.IsValidFolder(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
+                EnsureFolder(path);
+            }
+
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+        }
+
+        static void EnsureFolder(string path)
+        {
+            if (AssetDatabase.IsValidFolder(path)) return;
+
+            var parent = Path.GetDirectoryName(path)?.Replace('\\', '/');
+            if (string.IsNullOrEmpty(parent))
+            {
+                throw new InvalidDataException($"Invalid asset folder path: {path}");
+            }
+
+            EnsureFolder(parent);
+
+            var folderName = Path.GetFileName(path);
+            if (string.IsNullOrEmpty(AssetDatabase.CreateFolder(parent, folderName)))
+            {
+                throw new IOException($"Failed to create Unity asset folder: {path}");
             }
         }
 
@@ -158,8 +191,14 @@ namespace UnityTry.LipSyncTest.Editor
             bakedData.audioClip = audioClip;
 
             var editor = UnityEditor.Editor.CreateEditor(bakedData, typeof(BakedDataEditor));
-            ((BakedDataEditor)editor).Bake();
-            Object.DestroyImmediate(editor);
+            try
+            {
+                ((BakedDataEditor)editor).Bake();
+            }
+            finally
+            {
+                Object.DestroyImmediate(editor);
+            }
 
             if (!bakedData.isValid)
             {
