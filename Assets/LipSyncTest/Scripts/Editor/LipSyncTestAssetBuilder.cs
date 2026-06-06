@@ -174,11 +174,11 @@ namespace UnityTry.LipSyncTest.Editor
             {
                 if (track is AudioTrack)
                 {
-                    hasAudioTrack = HasClipWithAsset<AudioPlayableAsset>(track);
+                    hasAudioTrack |= HasClipWithAsset<AudioPlayableAsset>(track);
                 }
                 else if (track is uLipSyncTrack)
                 {
-                    hasLipSyncTrack = HasLipSyncClip(track, bakedData);
+                    hasLipSyncTrack |= HasLipSyncClip(track, bakedData);
                 }
             }
 
@@ -541,7 +541,7 @@ namespace UnityTry.LipSyncTest.Editor
             }
 
             var runner = directorObject.AddComponent<TimelineRecorderBatchRunner>();
-            runner.Configure(Mathf.Min(audioLength, 5f), RecorderOutputPath);
+            runner.Configure(Mathf.Min(audioLength, 5f), RecorderOutputPath, RecorderPresetPath);
 
             EditorSceneManager.SaveScene(scene, RecorderScenePath);
         }

@@ -4,6 +4,7 @@ using UnityEngine.Playables;
 #if UNITY_EDITOR
 using System.IO;
 using UnityEditor;
+using UnityEditor.Presets;
 using UnityEditor.Recorder;
 using UnityEditor.Recorder.Encoder;
 using UnityEditor.Recorder.Input;
@@ -16,11 +17,13 @@ namespace UnityTry.LipSyncTest
     {
         [SerializeField, Min(0.1f)] float duration = 5f;
         [SerializeField] string outputFile = "Recordings/LipSyncTest/test_voice_sequence";
+        [SerializeField] string recorderPresetPath = "Assets/LipSyncTest/Recorder/TestVoiceMovieRecorder.preset";
 
-        public void Configure(float sequenceDuration, string recorderOutputFile)
+        public void Configure(float sequenceDuration, string recorderOutputFile, string presetPath)
         {
             duration = Mathf.Max(0.1f, sequenceDuration);
             outputFile = recorderOutputFile;
+            recorderPresetPath = presetPath;
         }
 
 #if UNITY_EDITOR
@@ -62,6 +65,8 @@ namespace UnityTry.LipSyncTest
             var settings = ScriptableObject.CreateInstance<RecorderControllerSettings>();
             var movieRecorder = ScriptableObject.CreateInstance<MovieRecorderSettings>();
             ConfigureMovieRecorderSettings(movieRecorder, "Batch TestVoice Movie Recorder", outputFile);
+            ApplyRecorderPreset(movieRecorder);
+            movieRecorder.OutputFile = outputFile;
 
             settings.AddRecorderSettings(movieRecorder);
             settings.FrameRate = 30f;
@@ -102,6 +107,14 @@ namespace UnityTry.LipSyncTest
             var expectedOutputPath = Path.GetFullPath(outputFile + ".mp4");
             var fileInfo = new FileInfo(expectedOutputPath);
             return fileInfo.Exists && fileInfo.Length > 0;
+        }
+
+        void ApplyRecorderPreset(MovieRecorderSettings movieRecorder)
+        {
+            var preset = AssetDatabase.LoadAssetAtPath<Preset>(recorderPresetPath);
+            if (preset == null) return;
+
+            preset.ApplyTo(movieRecorder);
         }
 #endif
     }
