@@ -1,0 +1,79 @@
+name: Repository Hygiene
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  unity-repository-hygiene:
+    name: Unity repository hygiene
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Verify Git LFS is available
+        run: |
+          set -euo pipefail
+          git lfs version
+          git lfs install --local
+
+      - name: Check Unity generated folders are not tracked
+        run: |
+          set -euo pipefail
+
+          generated_paths_regex='^([Ll]ibrary|[Tt]emp|[Oo]bj|[Bb]uild|[Bb]uilds|[Ll]ogs|[Rr]ecordings|[Uu]ser[Ss]ettings|[Mm]emory[Cc]aptures)(/|$)'
+          tracked_generated="$(git ls-files | grep -E "$generated_paths_regex" || true)"
+
+          if [ -n "$tracked_generated" ]; then
+            echo "Unity generated paths must not be tracked:"
+            echo "$tracked_generated"
+            exit 1
+          fi
+
+      - name: Check Unity meta files are tracked and not ignored
+        run: |
+          set -euo pipefail
+
+          meta_files="$(git ls-files '*.meta')"
+          if [ -z "$meta_files" ]; then
+            echo "No tracked .meta files were found. Unity asset metadata must be versioned."
+            exit 1
+          fi
+
+          ignored_meta="$(printf '%s\n' "$meta_files" | git check-ignore --stdin --no-index 2>/dev/null || true)"
+          if [ -n "$ignored_meta" ]; then
+            echo ".meta files must not be ignored:"
+            echo "$ignored_meta"
+            exit 1
+          fi
+
+      - name: Check required Unity project files exist
+        run: |
+          set -euo pipefail
+
+          required_paths=(
+            Assets
+            Packages/manifest.json
+            ProjectSettings/ProjectSettings.asset
+            ProjectSettings/ProjectVersion.txt
+          )
+
+          missing_paths=()
+          for path in "${required_paths[@]}"; do
+            if [ ! -e "$path" ]; then
+              missing_paths+=("$path")
+            fi
+          done
+
+          if [ "${#missing_paths[@]}" -gt 0 ]; then
+            echo "Required Unity project paths are missing:"
+            printf '%s\n' "${missing_paths[@]}"
+            exit 1
+          fi
