@@ -3,10 +3,17 @@ using System.IO;
 using UniVRM10;
 using UnityEditor;
 using UnityEditor.Events;
+using UnityEditor.Presets;
+using UnityEditor.Recorder;
+using UnityEditor.Recorder.Encoder;
+using UnityEditor.Recorder.Input;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.Playables;
 using UnityEngine.SceneManagement;
+using UnityEngine.Timeline;
 using uLipSync;
+using uLipSync.Timeline;
 
 namespace UnityTry.LipSyncTest.Editor
 {
@@ -19,6 +26,10 @@ namespace UnityTry.LipSyncTest.Editor
         const string BakedDataPath = Root + "/BakedData/TestVoice.asset";
         const string PrefabPath = Root + "/Prefabs/BakedLipSyncAvatar.prefab";
         const string ScenePath = Root + "/Scenes/BakedLipSyncTest.unity";
+        const string TimelinePath = Root + "/Timeline/TestVoiceSequence.playable";
+        const string RecorderPresetPath = Root + "/Recorder/TestVoiceMovieRecorder.preset";
+        const string RecorderScenePath = Root + "/Scenes/TimelineRecorderTest.unity";
+        const string RecorderOutputPath = "Recordings/LipSyncTest/test_voice_sequence";
         const string PackageProfilePath = "Packages/com.hecomi.ulipsync/Assets/Profiles/uLipSync-Profile-Sample.asset";
 
         [MenuItem("Tools/LipSync Test/Rebuild Issue 4 Assets")]
@@ -42,9 +53,37 @@ namespace UnityTry.LipSyncTest.Editor
             AssetDatabase.Refresh();
         }
 
+        [MenuItem("Tools/LipSync Test/Rebuild Issue 5 Timeline Recorder Assets")]
+        public static void BuildIssue5()
+        {
+            if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+            {
+                return;
+            }
+
+            EnsureDirectories();
+            ImportInputs();
+
+            var profile = EnsureProfile();
+            var audioClip = LoadRequired<AudioClip>(AudioPath);
+            var bakedData = EnsureBakedData(profile, audioClip);
+            var avatarPrefab = BuildAvatarPrefab(bakedData, audioClip);
+            var timeline = BuildTimeline(audioClip, bakedData);
+            BuildRecorderPreset();
+            BuildRecorderScene(avatarPrefab, timeline, audioClip.length);
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
+
         public static void BuildFromBatch()
         {
             Build();
+        }
+
+        public static void BuildIssue5FromBatch()
+        {
+            BuildIssue5();
         }
 
         public static void ValidateFromBatch()
@@ -121,6 +160,108 @@ namespace UnityTry.LipSyncTest.Editor
             }
         }
 
+        public static void ValidateIssue5FromBatch()
+        {
+            var timeline = LoadRequired<TimelineAsset>(TimelinePath);
+            var recorderPreset = LoadRequired<Preset>(RecorderPresetPath);
+            var audioClip = LoadRequired<AudioClip>(AudioPath);
+            var bakedData = LoadRequired<BakedData>(BakedDataPath);
+            LoadRequired<SceneAsset>(RecorderScenePath);
+
+            var hasAudioTrack = false;
+            var hasLipSyncTrack = false;
+            foreach (var track in timeline.GetOutputTracks())
+            {
+                if (track is AudioTrack)
+                {
+                    hasAudioTrack |= HasClipWithAsset<AudioPlayableAsset>(track);
+                }
+                else if (track is uLipSyncTrack)
+                {
+                    hasLipSyncTrack |= HasLipSyncClip(track, bakedData);
+                }
+            }
+
+            if (!hasAudioTrack)
+            {
+                throw new InvalidDataException("Timeline does not contain an AudioTrack clip.");
+            }
+
+            if (!hasLipSyncTrack)
+            {
+                throw new InvalidDataException("Timeline does not contain a uLipSync Track clip bound to baked data.");
+            }
+
+            if (timeline.duration < Mathf.Min(audioClip.length, 5f) - 0.1f)
+            {
+                throw new InvalidDataException("Timeline duration is shorter than the configured test sequence.");
+            }
+
+            var recorderTargetType = recorderPreset.GetTargetTypeName();
+            if (recorderTargetType != nameof(MovieRecorderSettings) &&
+                recorderTargetType != typeof(MovieRecorderSettings).FullName)
+            {
+                throw new InvalidDataException("Recorder preset does not target MovieRecorderSettings.");
+            }
+
+            var scene = EditorSceneManager.OpenScene(RecorderScenePath, OpenSceneMode.Single);
+            var director = Object.FindAnyObjectByType<PlayableDirector>();
+            if (!director || director.playableAsset != timeline)
+            {
+                throw new MissingReferenceException("Recorder scene does not have a PlayableDirector bound to the test timeline.");
+            }
+
+            var camera = Camera.main;
+            if (!camera)
+            {
+                throw new MissingReferenceException("Recorder scene does not have a MainCamera.");
+            }
+
+            if (Vector3.Distance(camera.transform.position, new Vector3(0f, 1.25f, -2.2f)) > 0.05f)
+            {
+                throw new InvalidDataException("Recorder scene camera is not in the expected avatar framing position.");
+            }
+
+            var timelineEvent = Object.FindAnyObjectByType<uLipSyncTimelineEvent>();
+            if (!timelineEvent || timelineEvent.onLipSyncUpdate.GetPersistentEventCount() == 0)
+            {
+                throw new MissingReferenceException("Recorder scene does not bind Timeline lip-sync output to the VRM driver.");
+            }
+
+            foreach (var track in timeline.GetOutputTracks())
+            {
+                var binding = director.GetGenericBinding(track);
+                if (track is AudioTrack && binding is not AudioSource)
+                {
+                    throw new MissingReferenceException("AudioTrack is not bound to the avatar AudioSource.");
+                }
+
+                if (track is uLipSyncTrack && binding is not uLipSyncTimelineEvent)
+                {
+                    throw new MissingReferenceException("uLipSync Track is not bound to uLipSyncTimelineEvent.");
+                }
+            }
+
+            if (!scene.IsValid())
+            {
+                throw new InvalidDataException("Recorder scene could not be opened for validation.");
+            }
+        }
+
+        public static void ExportIssue5MovieFromBatch()
+        {
+            BuildIssue5();
+
+            var outputPath = Path.GetFullPath(RecorderOutputPath + ".mp4");
+            if (File.Exists(outputPath))
+            {
+                File.Delete(outputPath);
+            }
+
+            EditorSceneManager.OpenScene(RecorderScenePath, OpenSceneMode.Single);
+            EditorApplication.EnterPlaymode();
+        }
+
         static void EnsureDirectories()
         {
             foreach (var path in new[]
@@ -131,6 +272,8 @@ namespace UnityTry.LipSyncTest.Editor
                 Root + "/BakedData",
                 Root + "/Prefabs",
                 Root + "/Scenes",
+                Root + "/Timeline",
+                Root + "/Recorder",
             })
             {
                 EnsureFolder(path);
@@ -273,6 +416,157 @@ namespace UnityTry.LipSyncTest.Editor
             camera.backgroundColor = new Color(0.18f, 0.2f, 0.22f);
 
             EditorSceneManager.SaveScene(scene, ScenePath);
+        }
+
+        static TimelineAsset BuildTimeline(AudioClip audioClip, BakedData bakedData)
+        {
+            if (File.Exists(TimelinePath))
+            {
+                AssetDatabase.DeleteAsset(TimelinePath);
+            }
+
+            var timeline = ScriptableObject.CreateInstance<TimelineAsset>();
+            timeline.name = "TestVoiceSequence";
+            timeline.editorSettings.frameRate = 30d;
+            timeline.durationMode = TimelineAsset.DurationMode.FixedLength;
+            timeline.fixedDuration = Mathf.Min(audioClip.length, 5f);
+            AssetDatabase.CreateAsset(timeline, TimelinePath);
+
+            var audioTrack = timeline.CreateTrack<AudioTrack>("TestVoice Audio");
+            var audioTimelineClip = audioTrack.CreateClip(audioClip);
+            audioTimelineClip.start = 0d;
+            audioTimelineClip.duration = timeline.fixedDuration;
+            audioTimelineClip.displayName = audioClip.name;
+
+            var lipSyncTrack = timeline.CreateTrack<uLipSyncTrack>("TestVoice LipSync");
+            var lipSyncTimelineClip = lipSyncTrack.CreateClip<uLipSyncClip>();
+            lipSyncTimelineClip.start = 0d;
+            lipSyncTimelineClip.duration = timeline.fixedDuration;
+            lipSyncTimelineClip.displayName = "Baked LipSync";
+
+            var lipSyncClip = (uLipSyncClip)lipSyncTimelineClip.asset;
+            lipSyncClip.bakedData = bakedData;
+            lipSyncClip.volume = 1f;
+            lipSyncClip.timeOffset = 0.05f;
+
+            EditorUtility.SetDirty(timeline);
+            return timeline;
+        }
+
+        static void BuildRecorderPreset()
+        {
+            if (File.Exists(RecorderPresetPath))
+            {
+                AssetDatabase.DeleteAsset(RecorderPresetPath);
+            }
+
+            var recorder = ScriptableObject.CreateInstance<MovieRecorderSettings>();
+            try
+            {
+                TimelineRecorderBatchRunner.ConfigureMovieRecorderSettings(
+                    recorder,
+                    "TestVoice Movie Recorder",
+                    RecorderOutputPath);
+
+                var preset = new Preset(recorder);
+                AssetDatabase.CreateAsset(preset, RecorderPresetPath);
+            }
+            finally
+            {
+                Object.DestroyImmediate(recorder);
+            }
+        }
+
+        static void BuildRecorderScene(GameObject avatarPrefab, TimelineAsset timeline, float audioLength)
+        {
+            var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            var avatar = (GameObject)PrefabUtility.InstantiatePrefab(avatarPrefab, scene);
+            avatar.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+
+            var audioSource = avatar.GetComponent<AudioSource>();
+            if (!audioSource) audioSource = avatar.AddComponent<AudioSource>();
+            audioSource.playOnAwake = false;
+
+            var bakedPlayer = avatar.GetComponent<uLipSyncBakedDataPlayer>();
+            if (bakedPlayer)
+            {
+                bakedPlayer.playOnAwake = false;
+                bakedPlayer.playAudioSource = false;
+            }
+
+            var driver = avatar.GetComponent<Vrm10BakedLipSyncDriver>();
+            if (!driver) driver = avatar.AddComponent<Vrm10BakedLipSyncDriver>();
+
+            var timelineEvent = avatar.GetComponent<uLipSyncTimelineEvent>();
+            if (!timelineEvent) timelineEvent = avatar.AddComponent<uLipSyncTimelineEvent>();
+            timelineEvent.onLipSyncUpdate.RemoveAllListeners();
+            UnityEventTools.AddPersistentListener(timelineEvent.onLipSyncUpdate, driver.OnLipSyncUpdate);
+
+            var lightObject = new GameObject("Key Light");
+            SceneManager.MoveGameObjectToScene(lightObject, scene);
+            var light = lightObject.AddComponent<Light>();
+            light.type = LightType.Directional;
+            light.intensity = 2f;
+            lightObject.transform.rotation = Quaternion.Euler(45f, -35f, 0f);
+
+            var cameraObject = new GameObject("Main Camera");
+            SceneManager.MoveGameObjectToScene(cameraObject, scene);
+            var camera = cameraObject.AddComponent<Camera>();
+            cameraObject.AddComponent<AudioListener>();
+            camera.tag = "MainCamera";
+            camera.transform.position = new Vector3(0f, 1.25f, -2.2f);
+            camera.transform.rotation = Quaternion.LookRotation(new Vector3(0f, 1.15f, 0f) - camera.transform.position);
+            camera.clearFlags = CameraClearFlags.SolidColor;
+            camera.backgroundColor = new Color(0.18f, 0.2f, 0.22f);
+
+            var directorObject = new GameObject("Timeline Director");
+            SceneManager.MoveGameObjectToScene(directorObject, scene);
+            var director = directorObject.AddComponent<PlayableDirector>();
+            director.playableAsset = timeline;
+            director.playOnAwake = false;
+            director.timeUpdateMode = DirectorUpdateMode.GameTime;
+            director.extrapolationMode = DirectorWrapMode.None;
+            director.initialTime = 0d;
+
+            foreach (var track in timeline.GetOutputTracks())
+            {
+                if (track is AudioTrack)
+                {
+                    director.SetGenericBinding(track, audioSource);
+                }
+                else if (track is uLipSyncTrack)
+                {
+                    director.SetGenericBinding(track, timelineEvent);
+                }
+            }
+
+            var runner = directorObject.AddComponent<TimelineRecorderBatchRunner>();
+            runner.Configure(Mathf.Min(audioLength, 5f), RecorderOutputPath, RecorderPresetPath);
+
+            EditorSceneManager.SaveScene(scene, RecorderScenePath);
+        }
+
+        static bool HasClipWithAsset<T>(TrackAsset track) where T : Object
+        {
+            foreach (var clip in track.GetClips())
+            {
+                if (clip.asset is T) return true;
+            }
+
+            return false;
+        }
+
+        static bool HasLipSyncClip(TrackAsset track, BakedData bakedData)
+        {
+            foreach (var clip in track.GetClips())
+            {
+                if (clip.asset is uLipSyncClip lipSyncClip && lipSyncClip.bakedData == bakedData)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         static T LoadRequired<T>(string path) where T : Object
