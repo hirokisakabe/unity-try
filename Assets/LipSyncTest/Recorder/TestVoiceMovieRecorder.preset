@@ -58,7 +58,7 @@ Preset:
     objectReference: {fileID: 0}
   - target: {fileID: 0}
     propertyPath: encoderSettings
-    value: 1388511807758139392
+    value: 1388511992133976064
     objectReference: {fileID: 0}
   - target: {fileID: 0}
     propertyPath: captureAlpha
@@ -250,7 +250,7 @@ Preset:
     objectReference: {fileID: 0}
   - target: {fileID: 0}
     propertyPath: _accumulationSettings
-    value: 1388511807758139393
+    value: 1388511992133976065
     objectReference: {fileID: 0}
   - target: {fileID: 0}
     propertyPath: outputFormat
@@ -297,147 +297,147 @@ Preset:
     value: 1
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: 'managedReferences[1388511807758139392]'
+    propertyPath: 'managedReferences[1388511992133976064]'
     value: Unity.Recorder.Editor UnityEditor.Recorder.Encoder.CoreEncoderSettings
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: managedReferences[1388511807758139392].targetBitRate
+    propertyPath: managedReferences[1388511992133976064].targetBitRate
     value: 8
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: managedReferences[1388511807758139392].gopSize
+    propertyPath: managedReferences[1388511992133976064].gopSize
     value: 25
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: managedReferences[1388511807758139392].numConsecutiveBFrames
+    propertyPath: managedReferences[1388511992133976064].numConsecutiveBFrames
     value: 2
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: managedReferences[1388511807758139392].encodingProfile
+    propertyPath: managedReferences[1388511992133976064].encodingProfile
     value: 2
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: managedReferences[1388511807758139392].keyframeDistance
+    propertyPath: managedReferences[1388511992133976064].keyframeDistance
     value: 25
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: managedReferences[1388511807758139392].codec
+    propertyPath: managedReferences[1388511992133976064].codec
     value: 0
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: managedReferences[1388511807758139392].encodingQuality
+    propertyPath: managedReferences[1388511992133976064].encodingQuality
     value: 2
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: 'managedReferences[1388511807758139393]'
+    propertyPath: 'managedReferences[1388511992133976065]'
     value: Unity.Recorder.Editor AccumulationSettings
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: managedReferences[1388511807758139393].captureAccumulation
+    propertyPath: managedReferences[1388511992133976065].captureAccumulation
     value: 0
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: managedReferences[1388511807758139393].samples
+    propertyPath: managedReferences[1388511992133976065].samples
     value: 1
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: managedReferences[1388511807758139393].shutterInterval
+    propertyPath: managedReferences[1388511992133976065].shutterInterval
     value: 1
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: managedReferences[1388511807758139393].shutterProfileType
+    propertyPath: managedReferences[1388511992133976065].shutterProfileType
     value: 0
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: managedReferences[1388511807758139393].shutterProfileCurve.m_Curve.Array.size
+    propertyPath: managedReferences[1388511992133976065].shutterProfileCurve.m_Curve.Array.size
     value: 2
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: managedReferences[1388511807758139393].shutterProfileCurve.m_Curve.Array.data[0].time
+    propertyPath: managedReferences[1388511992133976065].shutterProfileCurve.m_Curve.Array.data[0].time
     value: 0
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: managedReferences[1388511807758139393].shutterProfileCurve.m_Curve.Array.data[0].value
+    propertyPath: managedReferences[1388511992133976065].shutterProfileCurve.m_Curve.Array.data[0].value
     value: 1
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: managedReferences[1388511807758139393].shutterProfileCurve.m_Curve.Array.data[0].inSlope
+    propertyPath: managedReferences[1388511992133976065].shutterProfileCurve.m_Curve.Array.data[0].inSlope
     value: 0
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: managedReferences[1388511807758139393].shutterProfileCurve.m_Curve.Array.data[0].outSlope
+    propertyPath: managedReferences[1388511992133976065].shutterProfileCurve.m_Curve.Array.data[0].outSlope
     value: 0
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: managedReferences[1388511807758139393].shutterProfileCurve.m_Curve.Array.data[0].tangentMode
+    propertyPath: managedReferences[1388511992133976065].shutterProfileCurve.m_Curve.Array.data[0].tangentMode
     value: 0
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: managedReferences[1388511807758139393].shutterProfileCurve.m_Curve.Array.data[0].weightedMode
+    propertyPath: managedReferences[1388511992133976065].shutterProfileCurve.m_Curve.Array.data[0].weightedMode
     value: 0
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: managedReferences[1388511807758139393].shutterProfileCurve.m_Curve.Array.data[0].inWeight
+    propertyPath: managedReferences[1388511992133976065].shutterProfileCurve.m_Curve.Array.data[0].inWeight
     value: 0
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: managedReferences[1388511807758139393].shutterProfileCurve.m_Curve.Array.data[0].outWeight
+    propertyPath: managedReferences[1388511992133976065].shutterProfileCurve.m_Curve.Array.data[0].outWeight
     value: 0
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: managedReferences[1388511807758139393].shutterProfileCurve.m_Curve.Array.data[1].time
+    propertyPath: managedReferences[1388511992133976065].shutterProfileCurve.m_Curve.Array.data[1].time
     value: 1
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: managedReferences[1388511807758139393].shutterProfileCurve.m_Curve.Array.data[1].value
+    propertyPath: managedReferences[1388511992133976065].shutterProfileCurve.m_Curve.Array.data[1].value
     value: 1
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: managedReferences[1388511807758139393].shutterProfileCurve.m_Curve.Array.data[1].inSlope
+    propertyPath: managedReferences[1388511992133976065].shutterProfileCurve.m_Curve.Array.data[1].inSlope
     value: 0
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: managedReferences[1388511807758139393].shutterProfileCurve.m_Curve.Array.data[1].outSlope
+    propertyPath: managedReferences[1388511992133976065].shutterProfileCurve.m_Curve.Array.data[1].outSlope
     value: 0
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: managedReferences[1388511807758139393].shutterProfileCurve.m_Curve.Array.data[1].tangentMode
+    propertyPath: managedReferences[1388511992133976065].shutterProfileCurve.m_Curve.Array.data[1].tangentMode
     value: 0
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: managedReferences[1388511807758139393].shutterProfileCurve.m_Curve.Array.data[1].weightedMode
+    propertyPath: managedReferences[1388511992133976065].shutterProfileCurve.m_Curve.Array.data[1].weightedMode
     value: 0
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: managedReferences[1388511807758139393].shutterProfileCurve.m_Curve.Array.data[1].inWeight
+    propertyPath: managedReferences[1388511992133976065].shutterProfileCurve.m_Curve.Array.data[1].inWeight
     value: 0
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: managedReferences[1388511807758139393].shutterProfileCurve.m_Curve.Array.data[1].outWeight
+    propertyPath: managedReferences[1388511992133976065].shutterProfileCurve.m_Curve.Array.data[1].outWeight
     value: 0
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: managedReferences[1388511807758139393].shutterProfileCurve.m_PreInfinity
+    propertyPath: managedReferences[1388511992133976065].shutterProfileCurve.m_PreInfinity
     value: 2
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: managedReferences[1388511807758139393].shutterProfileCurve.m_PostInfinity
+    propertyPath: managedReferences[1388511992133976065].shutterProfileCurve.m_PostInfinity
     value: 2
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: managedReferences[1388511807758139393].shutterProfileCurve.m_RotationOrder
+    propertyPath: managedReferences[1388511992133976065].shutterProfileCurve.m_RotationOrder
     value: 4
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: managedReferences[1388511807758139393].shutterFullyOpen
+    propertyPath: managedReferences[1388511992133976065].shutterFullyOpen
     value: 0.25
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: managedReferences[1388511807758139393].shutterBeginsClosing
+    propertyPath: managedReferences[1388511992133976065].shutterBeginsClosing
     value: 0.75
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: managedReferences[1388511807758139393].useSubPixelJitter
+    propertyPath: managedReferences[1388511992133976065].useSubPixelJitter
     value: 1
     objectReference: {fileID: 0}
   m_ExcludedProperties: []

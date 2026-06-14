@@ -31,6 +31,9 @@ namespace UnityTry.LipSyncTest.Editor
         const string RecorderScenePath = Root + "/Scenes/TimelineRecorderTest.unity";
         const string RecorderOutputPath = "Recordings/LipSyncTest/test_voice_sequence";
         const string PackageProfilePath = "Packages/com.hecomi.ulipsync/Assets/Profiles/uLipSync-Profile-Sample.asset";
+        const int UniversalRenderPipelineImporterValue = 2;
+        static readonly Vector3 CameraPosition = new Vector3(0f, 1.4f, 0.72f);
+        static readonly Vector3 CameraTarget = new Vector3(0f, 1.36f, 0f);
 
         [MenuItem("Tools/LipSync Test/Rebuild Issue 4 Assets")]
         public static void Build()
@@ -141,6 +144,11 @@ namespace UnityTry.LipSyncTest.Editor
                     throw new MissingComponentException("Prefab does not have Vrm10BakedLipSyncDriver.");
                 }
 
+                if (!avatar.GetComponent<Vrm10SimpleStageMotion>())
+                {
+                    throw new MissingComponentException("Prefab does not have Vrm10SimpleStageMotion.");
+                }
+
                 driver.OnLipSyncUpdate(new LipSyncInfo
                 {
                     phoneme = "A",
@@ -217,9 +225,22 @@ namespace UnityTry.LipSyncTest.Editor
                 throw new MissingReferenceException("Recorder scene does not have a MainCamera.");
             }
 
-            if (Vector3.Distance(camera.transform.position, new Vector3(0f, 1.25f, -2.2f)) > 0.05f)
+            if (Vector3.Distance(camera.transform.position, CameraPosition) > 0.05f)
             {
                 throw new InvalidDataException("Recorder scene camera is not in the expected avatar framing position.");
+            }
+
+            if (Mathf.Abs(camera.fieldOfView - 30f) > 0.1f)
+            {
+                throw new InvalidDataException("Recorder scene camera does not use the close-up framing field of view.");
+            }
+
+            var importer = AssetImporter.GetAtPath(ModelPath);
+            var serializedImporter = importer ? new SerializedObject(importer) : null;
+            var renderPipeline = serializedImporter?.FindProperty("RenderPipeline");
+            if (renderPipeline != null && renderPipeline.intValue != UniversalRenderPipelineImporterValue)
+            {
+                throw new InvalidDataException("VRM importer is not configured for URP materials.");
             }
 
             var timelineEvent = Object.FindAnyObjectByType<uLipSyncTimelineEvent>();
@@ -303,8 +324,23 @@ namespace UnityTry.LipSyncTest.Editor
 
         static void ImportInputs()
         {
+            EnsureVrmImporterSettings();
             AssetDatabase.ImportAsset(ModelPath, ImportAssetOptions.ForceSynchronousImport);
             AssetDatabase.ImportAsset(AudioPath, ImportAssetOptions.ForceSynchronousImport);
+        }
+
+        static void EnsureVrmImporterSettings()
+        {
+            var importer = AssetImporter.GetAtPath(ModelPath);
+            if (!importer) return;
+
+            var serializedImporter = new SerializedObject(importer);
+            var renderPipeline = serializedImporter.FindProperty("RenderPipeline");
+            if (renderPipeline == null || renderPipeline.intValue == UniversalRenderPipelineImporterValue) return;
+
+            renderPipeline.intValue = UniversalRenderPipelineImporterValue;
+            serializedImporter.ApplyModifiedPropertiesWithoutUndo();
+            importer.SaveAndReimport();
         }
 
         static Profile EnsureProfile()
@@ -383,6 +419,11 @@ namespace UnityTry.LipSyncTest.Editor
             var driver = avatar.GetComponent<Vrm10BakedLipSyncDriver>();
             if (!driver) driver = avatar.AddComponent<Vrm10BakedLipSyncDriver>();
 
+            if (!avatar.GetComponent<Vrm10SimpleStageMotion>())
+            {
+                avatar.AddComponent<Vrm10SimpleStageMotion>();
+            }
+
             player.onLipSyncUpdate.RemoveAllListeners();
             UnityEventTools.AddPersistentListener(player.onLipSyncUpdate, driver.OnLipSyncUpdate);
             EditorUtility.SetDirty(avatar);
@@ -410,8 +451,7 @@ namespace UnityTry.LipSyncTest.Editor
             var camera = cameraObject.AddComponent<Camera>();
             cameraObject.AddComponent<AudioListener>();
             camera.tag = "MainCamera";
-            camera.transform.position = new Vector3(0f, 1.25f, -2.2f);
-            camera.transform.rotation = Quaternion.LookRotation(new Vector3(0f, 1.15f, 0f) - camera.transform.position);
+            ConfigureCamera(camera);
             camera.clearFlags = CameraClearFlags.SolidColor;
             camera.backgroundColor = new Color(0.18f, 0.2f, 0.22f);
 
@@ -514,8 +554,7 @@ namespace UnityTry.LipSyncTest.Editor
             var camera = cameraObject.AddComponent<Camera>();
             cameraObject.AddComponent<AudioListener>();
             camera.tag = "MainCamera";
-            camera.transform.position = new Vector3(0f, 1.25f, -2.2f);
-            camera.transform.rotation = Quaternion.LookRotation(new Vector3(0f, 1.15f, 0f) - camera.transform.position);
+            ConfigureCamera(camera);
             camera.clearFlags = CameraClearFlags.SolidColor;
             camera.backgroundColor = new Color(0.18f, 0.2f, 0.22f);
 
@@ -544,6 +583,14 @@ namespace UnityTry.LipSyncTest.Editor
             runner.Configure(Mathf.Min(audioLength, 5f), RecorderOutputPath, RecorderPresetPath);
 
             EditorSceneManager.SaveScene(scene, RecorderScenePath);
+        }
+
+        static void ConfigureCamera(Camera camera)
+        {
+            camera.transform.position = CameraPosition;
+            camera.transform.rotation = Quaternion.LookRotation(CameraTarget - camera.transform.position);
+            camera.fieldOfView = 30f;
+            camera.nearClipPlane = 0.05f;
         }
 
         static bool HasClipWithAsset<T>(TrackAsset track) where T : Object
