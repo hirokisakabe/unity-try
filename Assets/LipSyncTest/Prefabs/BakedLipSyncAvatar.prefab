@@ -65,6 +65,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -1728013695380148634, guid: ce9e8f042c11b4732a732efbc1a8f3c9, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5186637985246995781}
+    - targetCorrespondingSourceObject: {fileID: -1728013695380148634, guid: ce9e8f042c11b4732a732efbc1a8f3c9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 49093860906739511}
   m_SourcePrefab: {fileID: -3956505258223990651, guid: ce9e8f042c11b4732a732efbc1a8f3c9, type: 3}
 --- !u!114 &1984249461500964376 stripped
 MonoBehaviour:
@@ -77,6 +80,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bfba4ccd3f854e64f868ce83553071a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: VRM10::UniVRM10.Vrm10Instance
+--- !u!95 &2036386623827017798 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 4870552773557632513, guid: ce9e8f042c11b4732a732efbc1a8f3c9, type: 3}
+  m_PrefabInstance: {fileID: 6905459866427670087}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &4022211010071367713 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -1728013695380148634, guid: ce9e8f042c11b4732a732efbc1a8f3c9, type: 3}
@@ -226,3 +234,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnityTry.LipSyncTest.Vrm10BakedLipSyncDriver
   vrm: {fileID: 1984249461500964376}
   maxWeight: 1
+--- !u!114 &49093860906739511
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4022211010071367713}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e0f7b8175b3b40a78cdab2d0a1fa68f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnityTry.LipSyncTest.Vrm10SimpleStageMotion
+  vrm: {fileID: 1984249461500964376}
+  animator: {fileID: 2036386623827017798}
+  rootSway: 0.006
+  rootYaw: 1
+  headYaw: 2.5
+  headPitch: 1
+  headRoll: 1.2
+  chestPitch: 0.8
+  chestYaw: 1.2
