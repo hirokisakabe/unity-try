@@ -252,3 +252,6 @@ MonoBehaviour:
   rootYaw: 1
   headYaw: 2.5
   headPitch: 1
+  headRoll: 1.2
+  chestPitch: 0.8
+  chestYaw: 1.2

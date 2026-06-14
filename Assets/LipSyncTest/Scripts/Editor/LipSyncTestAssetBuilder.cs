@@ -31,8 +31,9 @@ namespace UnityTry.LipSyncTest.Editor
         const string RecorderScenePath = Root + "/Scenes/TimelineRecorderTest.unity";
         const string RecorderOutputPath = "Recordings/LipSyncTest/test_voice_sequence";
         const string PackageProfilePath = "Packages/com.hecomi.ulipsync/Assets/Profiles/uLipSync-Profile-Sample.asset";
-        // UniVRM importer serialized enum: ImporterRenderPipelineTypes.UniversalRenderPipeline.
-        const int UniversalRenderPipelineImporterValue = 2;
+        const string UniversalRenderPipelineImporterName = "UniversalRenderPipeline";
+        const float CameraFieldOfView = 30f;
+        const float CameraNearClipPlane = 0.05f;
         static readonly Vector3 CameraPosition = new Vector3(0f, 1.4f, 0.72f);
         static readonly Vector3 CameraTarget = new Vector3(0f, 1.36f, 0f);
 
@@ -231,16 +232,16 @@ namespace UnityTry.LipSyncTest.Editor
                 throw new InvalidDataException("Recorder scene camera is not in the expected avatar framing position.");
             }
 
-            if (Mathf.Abs(camera.fieldOfView - 30f) > 0.1f)
+            if (Mathf.Abs(camera.fieldOfView - CameraFieldOfView) > 0.1f)
             {
                 throw new InvalidDataException("Recorder scene camera does not use the close-up framing field of view.");
             }
 
             var importer = AssetImporter.GetAtPath(ModelPath) ??
                 throw new InvalidDataException("VRM importer is missing.");
-            var renderPipeline = new SerializedObject(importer).FindProperty("RenderPipeline") ??
-                throw new InvalidDataException("VRM importer has no RenderPipeline property.");
-            if (renderPipeline.intValue != UniversalRenderPipelineImporterValue)
+            using var serializedImporter = new SerializedObject(importer);
+            var renderPipeline = FindRenderPipelineProperty(serializedImporter);
+            if (renderPipeline.enumValueIndex != GetUniversalRenderPipelineImporterIndex(renderPipeline))
             {
                 throw new InvalidDataException("VRM importer is not configured for URP materials.");
             }
@@ -336,13 +337,33 @@ namespace UnityTry.LipSyncTest.Editor
             var importer = AssetImporter.GetAtPath(ModelPath);
             if (!importer) return;
 
-            var serializedImporter = new SerializedObject(importer);
-            var renderPipeline = serializedImporter.FindProperty("RenderPipeline");
-            if (renderPipeline == null || renderPipeline.intValue == UniversalRenderPipelineImporterValue) return;
+            using var serializedImporter = new SerializedObject(importer);
+            var renderPipeline = FindRenderPipelineProperty(serializedImporter);
+            var urpIndex = GetUniversalRenderPipelineImporterIndex(renderPipeline);
+            if (renderPipeline.enumValueIndex == urpIndex) return;
 
-            renderPipeline.intValue = UniversalRenderPipelineImporterValue;
+            renderPipeline.enumValueIndex = urpIndex;
             serializedImporter.ApplyModifiedPropertiesWithoutUndo();
             importer.SaveAndReimport();
+        }
+
+        static SerializedProperty FindRenderPipelineProperty(SerializedObject importer)
+        {
+            return importer.FindProperty("RenderPipeline") ??
+                throw new InvalidDataException("VRM importer has no RenderPipeline property.");
+        }
+
+        static int GetUniversalRenderPipelineImporterIndex(SerializedProperty renderPipeline)
+        {
+            for (var i = 0; i < renderPipeline.enumNames.Length; i++)
+            {
+                if (renderPipeline.enumNames[i] == UniversalRenderPipelineImporterName)
+                {
+                    return i;
+                }
+            }
+
+            throw new InvalidDataException("VRM importer does not expose a URP render pipeline option.");
         }
 
         static Profile EnsureProfile()
@@ -591,8 +612,8 @@ namespace UnityTry.LipSyncTest.Editor
         {
             camera.transform.position = CameraPosition;
             camera.transform.rotation = Quaternion.LookRotation(CameraTarget - camera.transform.position);
-            camera.fieldOfView = 30f;
-            camera.nearClipPlane = 0.05f;
+            camera.fieldOfView = CameraFieldOfView;
+            camera.nearClipPlane = CameraNearClipPlane;
         }
 
         static bool HasClipWithAsset<T>(TrackAsset track) where T : Object

@@ -4,6 +4,7 @@ using UnityEngine;
 namespace UnityTry.LipSyncTest
 {
     [DisallowMultipleComponent]
+    // Run after UniVRM10.Vrm10Instance (11000) so the stage motion is not overwritten.
     [DefaultExecutionOrder(12000)]
     public sealed class Vrm10SimpleStageMotion : MonoBehaviour
     {
@@ -13,6 +14,9 @@ namespace UnityTry.LipSyncTest
         [SerializeField, Min(0f)] float rootYaw = 1f;
         [SerializeField, Min(0f)] float headYaw = 2.5f;
         [SerializeField, Min(0f)] float headPitch = 1f;
+        [SerializeField, Min(0f)] float headRoll = 1.2f;
+        [SerializeField, Min(0f)] float chestPitch = 0.8f;
+        [SerializeField, Min(0f)] float chestYaw = 1.2f;
 
         Transform root;
         Transform head;
@@ -58,8 +62,8 @@ namespace UnityTry.LipSyncTest
             if (chest)
             {
                 chest.localRotation = initialChestRotation * Quaternion.Euler(
-                    Mathf.Sin(t * 1.2f) * 0.8f,
-                    Mathf.Sin(t * 0.8f) * 1.2f,
+                    Mathf.Sin(t * 1.2f) * chestPitch,
+                    Mathf.Sin(t * 0.8f) * chestYaw,
                     0f);
             }
 
@@ -68,11 +72,16 @@ namespace UnityTry.LipSyncTest
                 head.localRotation = initialHeadRotation * Quaternion.Euler(
                     Mathf.Sin(t * 1.5f) * headPitch,
                     Mathf.Sin(t * 1.05f) * headYaw,
-                    Mathf.Sin(t * 1.3f) * 1.2f);
+                    Mathf.Sin(t * 1.3f) * headRoll);
             }
         }
 
         void OnDisable()
+        {
+            RestorePose();
+        }
+
+        void OnDestroy()
         {
             RestorePose();
         }

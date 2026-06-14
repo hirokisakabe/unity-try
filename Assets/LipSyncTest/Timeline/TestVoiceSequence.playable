@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-4575948616561138645
+--- !u!114 &-624387296106693599
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -17,7 +17,44 @@ MonoBehaviour:
   m_bufferingTime: 0.1
   m_ClipProperties:
     volume: 1
---- !u!114 &-4550995068479291430
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfda56da833e2384a9677cd3c976a436, type: 3}
+  m_Name: TestVoiceSequence
+  m_EditorClassIdentifier: Unity.Timeline::UnityEngine.Timeline.TimelineAsset
+  m_Version: 0
+  m_Tracks:
+  - {fileID: 7798524635873142200}
+  - {fileID: 5403642580380436849}
+  m_FixedDuration: 3.1202499866485596
+  m_EditorSettings:
+    m_Framerate: 30
+    m_ScenePreview: 1
+  m_DurationMode: 1
+  m_MarkerTrack: {fileID: 0}
+--- !u!114 &1200313884411471542
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a26d8e83b7dde433fa66b6cb4b73fae5, type: 3}
+  m_Name: uLipSyncClip
+  m_EditorClassIdentifier: uLipSync.Runtime::uLipSync.Timeline.uLipSyncClip
+  bakedData: {fileID: 11400000, guid: 1b10284d4538c4e39a09465a4e8a9326, type: 2}
+  volume: 1
+  timeOffset: 0.05
+--- !u!114 &5403642580380436849
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,10 +78,10 @@ MonoBehaviour:
   - m_Version: 1
     m_Start: 0
     m_ClipIn: 0
-    m_Asset: {fileID: -2821694158432342163}
+    m_Asset: {fileID: 1200313884411471542}
     m_Duration: 3.120249986648
     m_TimeScale: 1
-    m_ParentTrack: {fileID: -4550995068479291430}
+    m_ParentTrack: {fileID: 5403642580380436849}
     m_EaseInDuration: 0
     m_EaseOutDuration: 0
     m_BlendInDuration: -1
@@ -109,7 +146,7 @@ MonoBehaviour:
     m_DisplayName: Baked LipSync
   m_Markers:
     m_Objects: []
---- !u!114 &-4491157720539025316
+--- !u!114 &7798524635873142200
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -133,10 +170,10 @@ MonoBehaviour:
   - m_Version: 1
     m_Start: 0
     m_ClipIn: 0
-    m_Asset: {fileID: -4575948616561138645}
+    m_Asset: {fileID: -624387296106693599}
     m_Duration: 3.120249986648
     m_TimeScale: 1
-    m_ParentTrack: {fileID: -4491157720539025316}
+    m_ParentTrack: {fileID: 7798524635873142200}
     m_EaseInDuration: 0
     m_EaseOutDuration: 0
     m_BlendInDuration: -1
@@ -205,40 +242,3 @@ MonoBehaviour:
     volume: 1
     stereoPan: 0
     spatialBlend: 0
---- !u!114 &-2821694158432342163
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a26d8e83b7dde433fa66b6cb4b73fae5, type: 3}
-  m_Name: uLipSyncClip
-  m_EditorClassIdentifier: uLipSync.Runtime::uLipSync.Timeline.uLipSyncClip
-  bakedData: {fileID: 11400000, guid: 1b10284d4538c4e39a09465a4e8a9326, type: 2}
-  volume: 1
-  timeOffset: 0.05
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bfda56da833e2384a9677cd3c976a436, type: 3}
-  m_Name: TestVoiceSequence
-  m_EditorClassIdentifier: Unity.Timeline::UnityEngine.Timeline.TimelineAsset
-  m_Version: 0
-  m_Tracks:
-  - {fileID: -4491157720539025316}
-  - {fileID: -4550995068479291430}
-  m_FixedDuration: 3.1202499866485596
-  m_EditorSettings:
-    m_Framerate: 30
-    m_ScenePreview: 1
-  m_DurationMode: 1
-  m_MarkerTrack: {fileID: 0}
