@@ -31,6 +31,7 @@ namespace UnityTry.LipSyncTest.Editor
         const string RecorderScenePath = Root + "/Scenes/TimelineRecorderTest.unity";
         const string RecorderOutputPath = "Recordings/LipSyncTest/test_voice_sequence";
         const string PackageProfilePath = "Packages/com.hecomi.ulipsync/Assets/Profiles/uLipSync-Profile-Sample.asset";
+        // UniVRM importer serialized enum: ImporterRenderPipelineTypes.UniversalRenderPipeline.
         const int UniversalRenderPipelineImporterValue = 2;
         static readonly Vector3 CameraPosition = new Vector3(0f, 1.4f, 0.72f);
         static readonly Vector3 CameraTarget = new Vector3(0f, 1.36f, 0f);
@@ -235,10 +236,11 @@ namespace UnityTry.LipSyncTest.Editor
                 throw new InvalidDataException("Recorder scene camera does not use the close-up framing field of view.");
             }
 
-            var importer = AssetImporter.GetAtPath(ModelPath);
-            var serializedImporter = importer ? new SerializedObject(importer) : null;
-            var renderPipeline = serializedImporter?.FindProperty("RenderPipeline");
-            if (renderPipeline != null && renderPipeline.intValue != UniversalRenderPipelineImporterValue)
+            var importer = AssetImporter.GetAtPath(ModelPath) ??
+                throw new InvalidDataException("VRM importer is missing.");
+            var renderPipeline = new SerializedObject(importer).FindProperty("RenderPipeline") ??
+                throw new InvalidDataException("VRM importer has no RenderPipeline property.");
+            if (renderPipeline.intValue != UniversalRenderPipelineImporterValue)
             {
                 throw new InvalidDataException("VRM importer is not configured for URP materials.");
             }

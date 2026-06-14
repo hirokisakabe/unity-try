@@ -248,7 +248,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnityTry.LipSyncTest.Vrm10SimpleStageMotion
   vrm: {fileID: 1984249461500964376}
   animator: {fileID: 2036386623827017798}
-  rootSway: 0.015
-  rootYaw: 2
-  headYaw: 5
-  headPitch: 2
+  rootSway: 0.006
+  rootYaw: 1
+  headYaw: 2.5
+  headPitch: 1

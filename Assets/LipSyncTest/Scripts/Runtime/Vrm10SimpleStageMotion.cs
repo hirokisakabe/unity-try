@@ -4,14 +4,15 @@ using UnityEngine;
 namespace UnityTry.LipSyncTest
 {
     [DisallowMultipleComponent]
+    [DefaultExecutionOrder(12000)]
     public sealed class Vrm10SimpleStageMotion : MonoBehaviour
     {
         [SerializeField] Vrm10Instance vrm;
         [SerializeField] Animator animator;
-        [SerializeField, Min(0f)] float rootSway = 0.015f;
-        [SerializeField, Min(0f)] float rootYaw = 2f;
-        [SerializeField, Min(0f)] float headYaw = 5f;
-        [SerializeField, Min(0f)] float headPitch = 2f;
+        [SerializeField, Min(0f)] float rootSway = 0.006f;
+        [SerializeField, Min(0f)] float rootYaw = 1f;
+        [SerializeField, Min(0f)] float headYaw = 2.5f;
+        [SerializeField, Min(0f)] float headPitch = 1f;
 
         Transform root;
         Transform head;
@@ -21,6 +22,7 @@ namespace UnityTry.LipSyncTest
         Quaternion initialHeadRotation;
         Quaternion initialChestRotation;
         bool hasPose;
+        float elapsed;
 
         void Reset()
         {
@@ -36,6 +38,7 @@ namespace UnityTry.LipSyncTest
         void OnEnable()
         {
             CapturePose();
+            elapsed = 0f;
         }
 
         void LateUpdate()
@@ -44,7 +47,8 @@ namespace UnityTry.LipSyncTest
             if (!hasPose) CapturePose();
             if (!hasPose) return;
 
-            var t = Time.time;
+            elapsed += Time.deltaTime;
+            var t = elapsed;
             root.localPosition = initialRootPosition + new Vector3(
                 Mathf.Sin(t * 1.1f) * rootSway,
                 Mathf.Sin(t * 1.7f) * rootSway * 0.5f,
@@ -93,7 +97,7 @@ namespace UnityTry.LipSyncTest
 
         void RestorePose()
         {
-            if (!hasPose || !Application.isPlaying) return;
+            if (!hasPose || !Application.isPlaying || !root) return;
 
             root.localPosition = initialRootPosition;
             root.localRotation = initialRootRotation;
