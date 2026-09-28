@@ -1,3 +1,0 @@
-[mcp_servers.unityMCP]
-command = "uvx"
-args = ["--from", "mcpforunityserver", "mcp-for-unity", "--transport", "stdio"]
