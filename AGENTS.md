@@ -7,7 +7,6 @@ This is a Unity 6000.4.10f1 project. Keep Unity-authored project files under `As
 - `Assets/Scenes/` contains general Unity scenes, including `SampleScene.unity`.
 - `Assets/LipSyncTest/` contains the lip-sync sample: `Audio/`, `Models/`, `Prefabs/`, `Profiles/`, `Scenes/`, `Timeline/`, and C# scripts.
 - `Assets/LipSyncTest/Scripts/Runtime/` is for runtime components; `Assets/LipSyncTest/Scripts/Editor/` is for editor-only tooling.
-- `Assets/McpValidation/Editor/` contains Unity MCP validation editor code.
 - `Docs/` contains repository documentation.
 
 Track `.meta` files with their assets. Do not commit generated Unity folders such as `Library/`, `Temp/`, `Obj/`, `Build/`, `Builds/`, `Logs/`, `Recordings/`, or `UserSettings/`.
@@ -23,7 +22,7 @@ CI runs `.github/workflows/repository-hygiene.yml`, which verifies Git LFS avail
 
 ## Coding Style & Naming Conventions
 
-Use C# with 4-space indentation. Follow existing Unity conventions: `PascalCase` for types, public methods, and properties; `camelCase` for locals and parameters; descriptive class names ending in their role, such as `Vrm10BakedLipSyncDriver` or `TimelineRecorderBatchRunner`. Place editor-only scripts in an `Editor/` folder and use editor namespaces such as `UnityTry.McpValidation.Editor`.
+Use C# with 4-space indentation. Follow existing Unity conventions: `PascalCase` for types, public methods, and properties; `camelCase` for locals and parameters; descriptive class names ending in their role, such as `Vrm10BakedLipSyncDriver` or `TimelineRecorderBatchRunner`. Place editor-only scripts in an `Editor/` folder and use editor namespaces such as `UnityTry.LipSyncTest.Editor`.
 
 ## Testing Guidelines
 
