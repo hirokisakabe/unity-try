@@ -30,10 +30,10 @@ Use the Unity Test Framework (`com.unity.test-framework`). Put Edit Mode tests u
 
 ## Commit & Pull Request Guidelines
 
-Recent history uses short conventional-style subjects, for example `feat: validate Unity MCP integration`, `ci: add Unity repository hygiene workflow`, and `chore: launch Unity MCP via stdio`. Keep commits focused and use prefixes such as `feat:`, `fix:`, `ci:`, or `chore:`.
+Recent history uses short conventional-style subjects, for example `fix: improve lip sync recorder visibility`, `ci: add Unity repository hygiene workflow`, and `docs: add repository contributor guide`. Keep commits focused and use prefixes such as `feat:`, `fix:`, `ci:`, or `chore:`.
 
 Write PR descriptions in Japanese. Add `close #<issue番号>` at the start of the PR description only when the user explicitly specified an issue number. Include relevant validation results and screenshots or recordings for visual Unity changes.
 
 ## Security & Configuration Tips
 
-Do not commit machine-local Unity state or credentials. Package restoration needs access to `packages.unity.com`, `registry.npmjs.org`, `github.com`, and a working `git` command because UniVRM and Unity MCP dependencies are Git URL packages.
+Do not commit machine-local Unity state or credentials. Package restoration needs access to `packages.unity.com`, `registry.npmjs.org`, `github.com`, and a working `git` command because UniVRM dependencies are Git URL packages.
