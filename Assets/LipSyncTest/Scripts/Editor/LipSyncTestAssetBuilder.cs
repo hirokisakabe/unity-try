@@ -422,10 +422,17 @@ namespace UnityTry.LipSyncTest.Editor
             }
 
             using var serializedRunner = new SerializedObject(runner);
-            if (serializedRunner.FindProperty("outputFile").stringValue != ScenarioRecorderOutputPath ||
-                serializedRunner.FindProperty("recorderPresetPath").stringValue != ScenarioRecorderPresetPath)
+            var durationProperty = serializedRunner.FindProperty("duration") ??
+                throw new InvalidDataException("Scenario Recorder runner has no duration field.");
+            var outputFileProperty = serializedRunner.FindProperty("outputFile") ??
+                throw new InvalidDataException("Scenario Recorder runner has no outputFile field.");
+            var recorderPresetPathProperty = serializedRunner.FindProperty("recorderPresetPath") ??
+                throw new InvalidDataException("Scenario Recorder runner has no recorderPresetPath field.");
+            if (Mathf.Abs(durationProperty.floatValue - Mathf.Min(audioClip.length, 5f)) > 0.01f ||
+                outputFileProperty.stringValue != ScenarioRecorderOutputPath ||
+                recorderPresetPathProperty.stringValue != ScenarioRecorderPresetPath)
             {
-                throw new InvalidDataException("Scenario Recorder runner output or preset is inconsistent.");
+                throw new InvalidDataException("Scenario Recorder runner duration, output, or preset is inconsistent.");
             }
         }
 
@@ -931,10 +938,19 @@ namespace UnityTry.LipSyncTest.Editor
             }
 
             if (string.IsNullOrWhiteSpace(scenario.WavAssetPath) ||
-                !scenario.WavAssetPath.StartsWith("Assets/") ||
+                !scenario.WavAssetPath.StartsWith("Assets/", System.StringComparison.Ordinal) ||
                 !string.Equals(Path.GetExtension(scenario.WavAssetPath), ".wav", System.StringComparison.OrdinalIgnoreCase))
             {
                 throw new InvalidDataException("Scenario WAV asset path must point to a .wav file below Assets/.");
+            }
+
+            var projectRoot = Path.GetDirectoryName(Application.dataPath) ??
+                throw new InvalidDataException("Unity project root could not be resolved.");
+            var assetsRoot = Path.GetFullPath(Application.dataPath) + Path.DirectorySeparatorChar;
+            var wavFullPath = Path.GetFullPath(Path.Combine(projectRoot, scenario.WavAssetPath));
+            if (!wavFullPath.StartsWith(assetsRoot, System.StringComparison.Ordinal))
+            {
+                throw new InvalidDataException("Scenario WAV asset path resolves outside Assets/.");
             }
         }
 
